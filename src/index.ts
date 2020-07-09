@@ -1,3 +1,3 @@
-import { TestComponent } from './components/TestComponent/TestComponent';
+import { TizenConsole } from './components/TizenConsole';
 
-export { TestComponent };
+export { TizenConsole };

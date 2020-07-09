@@ -1,9 +1,6 @@
-# react-component-lib
+# tizen-console
 
-This is a boilerplate repository for creating npm packages with React components written in TypeScript and using styled-components.
-
-Medium article explaining step by step how to use this repo to publish your own library to NPM:
-https://medium.com/@xfor/developing-publishing-react-component-library-to-npm-styled-components-typescript-cc8274305f5a
+This is a package for adding a console window **React** component to a Tizen App running on a Samsung TV. Anything you have logged to the console will show up (excluding any filtered logs). there is an input for calling functions. anything you write into the input will be logged when you hit the enter key.
 
 ## Installation:
 
@@ -19,14 +16,70 @@ It will install:
 - `peerDependencies` from ./package.json thanks to `install-peers-cli`
 - `dependencies` and `devDependencies` from ./example/package.json (example `create react app` for testing)
 
-## Developing your library:
+## Utilization
 
-To start developing your library, run `npm run dev`. It will build your library and run example `create-react-app` where you can test your components. Each time you make changes to your library or example app, app will be reloaded to reflect your changes.
+install the package
 
-## Styled-components:
+```
+npm install tizen-console
+```
 
-Developing library with components built with styled-components is challenging because you have to keep only one instance of styled-components. If you would just symlink your library (`file:../` or `npm link`) to example app that is also using styled-components you'll get a console warning about multiple instances of styled-components (even though styled-components are peer dependency) and your styles will be possibly broken. To be able to conveniently develop styled components I am injecting bundled files directly into example app's /src folder and importing it in App.tsx along with type declaration.
+the package uses React and React-DOM as peer-dependencies so you will need to have those installed.
 
-## Typescript
+in your App component, as high in the tree as possible, add the TizenConsole component like so:
 
-This boilerplate lets you develop your libraries in Typescript and you can simultaneously test it in Typescript example create-react-app.
+```js
+import React, { Component } from 'react';
+import SomeComponent from './SomeComponent';
+import SomeOtherComponent from './SomeComponent';
+import { TizenConsole } from 'tizen-console';
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <TizenConsole size="lg" corner="tl" />
+        <SomeComponent />
+        <SomeOtherComponent />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+### Props
+
+```ts
+interface TizenConsoleProps {
+  size: 'sm' | 'md' | 'lg';
+  corner: 'tr' | 'tl' | 'br' | 'bl';
+  filter?: Methods[];
+}
+
+type Methods =
+  | 'log'
+  | 'warn'
+  | 'error'
+  | 'info'
+  | 'debug'
+  | 'table'
+  | 'time'
+  | 'clear'
+  | 'timeEnd'
+  | 'count'
+  | 'assert';
+```
+
+corner specified which corner of the TV window the console will be and size indicates the size of the console. Methods are an array of filter methods used to show only the types of console methods you want displayed.
+
+## credits
+
+used the following npm packages to create this app
+
+- [React](https://reactjs.org/)
+- [styled-components](https://styled-components.com/)
+- [consle-feed](https://github.com/samdenty/console-feed)
+
+and used the boilerplate ts project found at https://github.com/michal-wrzosek/react-component-lib
