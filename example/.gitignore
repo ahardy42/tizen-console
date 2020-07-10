@@ -10,6 +10,7 @@
 
 # production
 /build
+/tizen_build
 
 # misc
 .DS_Store
