@@ -2,6 +2,8 @@
 
 This is a package for adding a console window **React** component to a Tizen App running on a Samsung TV. Anything you have logged to the console will show up (excluding any filtered logs). there is an input for calling functions. anything you write into the input will be logged when you hit the enter key.
 
+This package is a work in progress!! feel free to submit PRs for new and better features!
+
 ## Installation:
 
 To install all dependencies run:
@@ -22,6 +24,13 @@ install the package
 
 ```
 npm install tizen-console
+```
+
+be sure that your tizen project `config.xml` has the following priviledges enabled (at minimum):
+
+```xml
+<tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+<tizen:privilege name="http://developer.samsung.com/privilege/productinfo"/>
 ```
 
 the package uses React and React-DOM as peer-dependencies so you will need to have those installed.
@@ -73,6 +82,11 @@ type Methods =
 ```
 
 corner specified which corner of the TV window the console will be and size indicates the size of the console. Methods are an array of filter methods used to show only the types of console methods you want displayed.
+
+## using the console
+
+activate and de-activate the console by pressing the red A button on your remote.
+the keyboard will open indicating that the input is active. type a function to log the result of the console and press the enter key
 
 ## credits
 

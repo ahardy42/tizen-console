@@ -1,6 +1,13 @@
 import styled from 'styled-components';
 import { TizenConsoleProps } from '../../types';
 
+export const OuterWrapper = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent;
+`;
+
 export const Wrapper = styled.div`
   padding: 10px;
   margin: 10px;
@@ -12,6 +19,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 export const TitleWrapper = styled.div`

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Hook, Console, Decode } from 'console-feed';
-import { Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input } from './styles/App';
+import { OuterWrapper, Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input } from './styles/App';
 import { TizenConsoleProps } from '../types';
 import { isTizen } from '../common/utils';
 import {
@@ -18,7 +18,7 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   const [logs, setLogs] = React.useState<any[]>([]);
   const [value, setValue] = React.useState<string>('');
   const [version, setVersion] = React.useState<string>('loading...');
-  const [isActive, setActive] = React.useState<boolean>(true);
+  const [isActive, setActive] = React.useState<boolean>(false);
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -29,8 +29,6 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
 
   const handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
     switch (event.keyCode) {
-      case KEY_RED_BUTTON:
-        return setActive(bool => !bool);
       case KEY_DOWN:
         return handleArrowDown(event);
       case KEY_UP:
@@ -44,6 +42,10 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
       default:
         return;
     }
+  }
+
+  const handleRedButtonDown: ({ keyCode }: KeyboardEvent) => void = ({ keyCode }) => {
+    if (keyCode === KEY_RED_BUTTON) return setActive(bool => !bool);
   }
 
   const handleArrowDown: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
@@ -113,14 +115,23 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
 
   React.useEffect(() => {
     if (!isTizen()) return setVersion('N/A');
-    setVersion((window as any).webapis.productinfo.getVersion());
+    try {
+      let version = (window as any).webapis.productinfo.getVersion();
+      setVersion(version);
+    } catch (error) {
+      console.log(error);
+      setVersion('Unable To Get Version');
+    }
   }, []);
 
   React.useEffect(() => {
     registerRemoteKeys();
 
+    window.addEventListener('keydown', handleRedButtonDown);
+
     return () => {
       unregisterRemoteKeys();
+      window.removeEventListener('keydown', handleRedButtonDown);
     }
   }, [])
 
@@ -137,16 +148,18 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   }, [isActive])
 
   return (
-    <Wrapper onKeyDown={handleKeyDown} {...props}>
-      <TitleWrapper>
-        <Title>TV Version: {version}</Title>
-      </TitleWrapper>
-      <LogWrapper tabIndex={-1} ref={scrollRef}>
-        <Console filter={props.filter} logs={logs}/>
-      </LogWrapper>
-      <InputWrapper>
-        <Input ref={inputRef} onChange={handleChange} value={value} placeholder='>Console'/>
-      </InputWrapper>
-    </Wrapper>
+    <OuterWrapper>
+      <Wrapper onKeyDown={handleKeyDown} {...props}>
+        <TitleWrapper>
+          <Title>TV Version: {version}</Title>
+        </TitleWrapper>
+        <LogWrapper tabIndex={-1} ref={scrollRef}>
+          <Console filter={props.filter} logs={logs}/>
+        </LogWrapper>
+        <InputWrapper>
+          <Input ref={inputRef} onChange={handleChange} value={value} placeholder='>Console'/>
+        </InputWrapper>
+      </Wrapper>
+    </OuterWrapper>
   )
 };
