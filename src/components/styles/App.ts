@@ -1,10 +1,52 @@
 import styled from 'styled-components';
 import { TizenConsoleProps } from '../../types';
 
+const _returnTopOrLeft = (corner: TizenConsoleProps['corner']) => {
+  switch (corner) {
+    case 'tl':
+      return (
+        `
+        top: 0;
+        left: 0;
+        `
+      )
+    case 'bl':
+      return (
+        `
+        bottom: 0;
+        left: 0;
+        `
+      )
+    case 'tr':
+      return (
+        `
+        top: 0;
+        right: 0;
+        `
+      )
+    case 'br':
+      return (
+        `
+        bottom: 0;
+        right: 0;
+        `
+      )
+    default:
+      return (
+        `
+        top: 0;
+        left: 0;
+        `
+      )
+  }
+}
+
 export const OuterWrapper = styled.div`
-  position: relative;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: transparent;
 `;
 
@@ -15,6 +57,7 @@ export const Wrapper = styled.div`
   position: absolute;
   width: ${(props: TizenConsoleProps) => props.size === 'lg' ? '500px' : props.size === 'md' ? '400px' : '300px'};
   height: ${(props: TizenConsoleProps) => props.size === 'lg' ? '500px' : props.size === 'md' ? '400px' : '300px'};
+  ${(props: TizenConsoleProps) => _returnTopOrLeft(props.corner)}
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -23,7 +66,7 @@ export const Wrapper = styled.div`
 `;
 
 export const TitleWrapper = styled.div`
-  height: 10%;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,12 +79,20 @@ export const Title = styled.h5`
 `;
 
 export const LogWrapper = styled.div`
-  height: 80%;
+  flex: 6;
+  width: 100%;
   overflow: scroll;
+  border: 2px solid white;
+  margin-bottom: 10px;
+  &:focus {
+    border: 2px solid red;
+  }
 `;
 
 export const InputWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+  flex: 2;
   width: 90%;
   justify-content: center;
   align-items: center;
@@ -49,4 +100,20 @@ export const InputWrapper = styled.div`
 
 export const Input = styled.input`
  width: 100%;
+ &:focus {
+  border: 2px solid red;
+ }
+`;
+
+export const Button = styled.button`
+  margin: 10px;
+  width: 100px;
+  height: 30px;
+  background-color: white;
+  color: black;
+  border: 2px solid white;
+  &:focus {
+    background-color: red;
+    color: white;
+  }
 `;

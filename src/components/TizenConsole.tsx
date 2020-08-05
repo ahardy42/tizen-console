@@ -1,11 +1,10 @@
 import React from 'react';
 import { Hook, Console, Decode } from 'console-feed';
-import { OuterWrapper, Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input } from './styles/App';
+import { OuterWrapper, Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input, Button } from './styles/App';
 import { TizenConsoleProps } from '../types';
 import { isTizen } from '../common/utils';
 import {
   KEY_DOWN,
-  KEY_ENTER,
   KEY_LEFT,
   KEY_RED_BUTTON,
   KEY_RIGHT,
@@ -18,16 +17,18 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   const [logs, setLogs] = React.useState<any[]>([]);
   const [value, setValue] = React.useState<string>('');
   const [version, setVersion] = React.useState<string>('loading...');
-  const [isActive, setActive] = React.useState<boolean>(false);
+  const [isActive, setActive] = React.useState<boolean>(true);
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   const handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void = event => {
     setValue(event.target.value);
   }
 
   const handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
+
     switch (event.keyCode) {
       case KEY_DOWN:
         return handleArrowDown(event);
@@ -37,8 +38,6 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
         return handleArrowLeft(event);
       case KEY_RIGHT:
         return handleArrowRight(event);
-      case KEY_ENTER:
-        return handleSubmit(event);
       default:
         return;
     }
@@ -52,9 +51,16 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
     if (!isActive) return;
     event.stopPropagation();
 
-    if (fullyScrolled('down')) {
-      scrollRef.current?.blur();
-      inputRef.current?.focus();
+    let focused = document.activeElement;
+
+    if (focused === scrollRef.current) {
+      if (fullyScrolled('down')) {
+        scrollRef.current?.blur();
+        inputRef.current?.focus();
+      }
+    } else if (focused === inputRef.current) {
+      inputRef.current?.blur();
+      buttonRef.current?.focus();
     }
   }
 
@@ -62,7 +68,12 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
     if (!isActive) return;
     event.stopPropagation();
 
-    if (document.activeElement === inputRef.current) {
+    let focused = document.activeElement;
+
+    if (focused === buttonRef.current) {
+      buttonRef.current?.blur();
+      inputRef.current?.focus();
+    } else if (focused === inputRef.current) {
       inputRef.current?.blur();
       scrollRef.current?.focus();
     }
@@ -78,14 +89,14 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
     event.stopPropagation();
   } 
   
-  const handleSubmit: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
+  const handleSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void = event => {
     if (!isActive) return;
     event.stopPropagation();
 
-    if (inputRef.current === document.activeElement) {
+    if (buttonRef.current === document.activeElement) {
       try {
-        let fn = Function(value);
-        console.log(fn.call(window))
+        let fn = Function(`console.log(${value})`);
+        fn();
       } catch (error) {
         console.log('console error:', error)
       }
@@ -143,12 +154,22 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
       const focused = document.activeElement;
       if (focused === inputRef.current) inputRef.current?.blur();
       if (focused === scrollRef.current) scrollRef.current?.blur();
+      if (focused === buttonRef.current) buttonRef.current?.blur();
     }
 
   }, [isActive])
 
+  React.useEffect(() => {
+    let focused = document.activeElement;
+    if (focused !== scrollRef.current && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [logs, scrollRef])
+
+  const wrapperStyle: React.CSSProperties = !isActive ? {display: 'none'} : {display: 'block'}
+
   return (
-    <OuterWrapper>
+    <OuterWrapper style={wrapperStyle}>
       <Wrapper onKeyDown={handleKeyDown} {...props}>
         <TitleWrapper>
           <Title>TV Version: {version}</Title>
@@ -158,6 +179,7 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
         </LogWrapper>
         <InputWrapper>
           <Input ref={inputRef} onChange={handleChange} value={value} placeholder='>Console'/>
+          <Button ref={buttonRef} onClick={handleSubmit}>Submit</Button>
         </InputWrapper>
       </Wrapper>
     </OuterWrapper>
