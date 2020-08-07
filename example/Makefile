@@ -1,9 +1,9 @@
 TV_NAME := $(shell ~/tizen-studio/tools/sdb devices | perl -ne 'if(/\bdevice\b/){ @_ = split (/\s+/, $$_); print @_[0]; } ')
 DEVICE_NAME = emulator-26101
-CERTIFICATE_PROFILE = Tivi
-TV_PROFILE = TiviTV
+CERTIFICATE_PROFILE = MyCert
+TV_PROFILE = MyCert
 APP_NAME = example
-PACKAGE_ID = G8xrhAN5vv
+PACKAGE_ID = <package id>
 
 build:
 	npx react-scripts build
