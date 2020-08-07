@@ -84,7 +84,45 @@ the keyboard will open indicating that the input is active. type a function to l
 
 ## checking out the example app
 
-to see the very simple example app in action in your browser:
+to see the very simple example app in action:
+
+first, clone the repo:
+
+```
+git clone https://github.com/ahardy42/tizen-console.git
+cd tizen-console
+npm install
+```
+
+Then, set up a tizen project using the [tizen cli](https://developer.tizen.org/development/tizen-studio/web-tools/cli#Create_project)
+
+```
+tizen create web-project -p tv-samsung-5.5 -t BasicEmptyProject -n example
+cd example
+rm -rf css
+rm main.js
+rm index.html
+```
+
+Then, replace the CERTIFICATE_PROFILE and TV_PROFILE values in the `MakeFile` with your own certs.
+
+Then, update PACKAGE_ID values in the `MakeFile` to match the id found in the newly created `config.xml`
+
+now you're ready to run the example app!
+
+to run in your browser:
+
+```
+npm run dev
+```
+
+to run on your emulator (first, make sure the emulator is open and running on your machine):
+
+run `npm run tizen`
+
+to run on your tv (first make sure your tv is connected and running):
+
+run `npm run tizen-tv`
 
 ## credits
 

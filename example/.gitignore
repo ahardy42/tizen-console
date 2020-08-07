@@ -12,6 +12,11 @@
 /build
 /tizen_build
 
+# tizen
+.tprojecdt
+config.xml
+icon.png
+
 # misc
 .DS_Store
 .env.local
