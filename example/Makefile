@@ -1,4 +1,4 @@
-TV_NAME = 10.0.0.15:26101
+TV_NAME := $(shell ~/tizen-studio/tools/sdb devices | perl -ne 'if(/\bdevice\b/){ @_ = split (/\s+/, $$_); print @_[0]; } ')
 DEVICE_NAME = emulator-26101
 CERTIFICATE_PROFILE = Tivi
 TV_PROFILE = TiviTV

@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { TizenConsoleProps } from '../../types';
 
@@ -62,7 +63,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 5000;
 `;
 
 export const TitleWrapper = styled.div`
@@ -116,4 +117,36 @@ export const Button = styled.button`
     background-color: red;
     color: white;
   }
+`;
+
+export const CodeWrapper = styled.div`
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  width: 500px;
+  margin-left: -250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border: 2px solid black;
+  z-index: 5000;
+`;
+
+type ParaProps = {
+  children: any,
+  className?: any
+}
+
+const Para = ({children, className}: ParaProps) => {
+  return (
+    <p className={className}>{children}</p>
+  )
+}
+
+export const CodeText = styled(Para)`
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  font-size: 24px;
 `;

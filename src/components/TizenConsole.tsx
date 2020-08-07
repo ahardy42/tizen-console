@@ -1,23 +1,19 @@
 import React from 'react';
 import { Hook, Console, Decode } from 'console-feed';
-import { OuterWrapper, Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input, Button } from './styles/App';
+import { OuterWrapper, Wrapper, TitleWrapper, Title, LogWrapper, InputWrapper, Input, Button, CodeText, CodeWrapper } from './styles/App';
 import { TizenConsoleProps } from '../types';
 import { isTizen } from '../common/utils';
 import {
   KEY_DOWN,
-  KEY_LEFT,
-  KEY_RED_BUTTON,
-  KEY_RIGHT,
   KEY_UP,
-  registerRemoteKeys,
-  unregisterRemoteKeys
 } from '../common/remoteKeys';
+import { useSecretCode } from '../common/useSecretCode';
 
 export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   const [logs, setLogs] = React.useState<any[]>([]);
   const [value, setValue] = React.useState<string>('');
   const [version, setVersion] = React.useState<string>('loading...');
-  const [isActive, setActive] = React.useState<boolean>(true);
+  const [isActive, code] = useSecretCode();
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -29,28 +25,21 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
 
   const handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
 
+    if (!isActive) return;
     switch (event.keyCode) {
       case KEY_DOWN:
         return handleArrowDown(event);
       case KEY_UP:
         return handleArrowUp(event);
-      case KEY_LEFT:
-        return handleArrowLeft(event);
-      case KEY_RIGHT:
-        return handleArrowRight(event);
       default:
         return;
     }
   }
 
-  const handleRedButtonDown: ({ keyCode }: KeyboardEvent) => void = ({ keyCode }) => {
-    if (keyCode === KEY_RED_BUTTON) return setActive(bool => !bool);
-  }
-
   const handleArrowDown: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
-    if (!isActive) return;
-    event.stopPropagation();
 
+    event.preventDefault();
+    event.stopPropagation();
     let focused = document.activeElement;
 
     if (focused === scrollRef.current) {
@@ -65,9 +54,9 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   }
 
   const handleArrowUp: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
-    if (!isActive) return;
-    event.stopPropagation();
 
+    event.preventDefault();
+    event.stopPropagation();
     let focused = document.activeElement;
 
     if (focused === buttonRef.current) {
@@ -78,16 +67,6 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
       scrollRef.current?.focus();
     }
   }
-
-  const handleArrowLeft: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
-    if (!isActive) return;
-    event.stopPropagation();
-  }
-
-  const handleArrowRight: (event: React.KeyboardEvent<HTMLDivElement>) => void = event => {
-    if (!isActive) return;
-    event.stopPropagation();
-  } 
   
   const handleSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void = event => {
     if (!isActive) return;
@@ -136,17 +115,6 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   }, []);
 
   React.useEffect(() => {
-    registerRemoteKeys();
-
-    window.addEventListener('keydown', handleRedButtonDown);
-
-    return () => {
-      unregisterRemoteKeys();
-      window.removeEventListener('keydown', handleRedButtonDown);
-    }
-  }, [])
-
-  React.useEffect(() => {
 
     if (isActive) {
       inputRef.current?.focus();
@@ -167,21 +135,27 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
   }, [logs, scrollRef])
 
   const wrapperStyle: React.CSSProperties = !isActive ? {display: 'none'} : {display: 'block'}
+  const codeWrapperStyle: React.CSSProperties = !!code ? {display: 'block'} : {display: 'none'}
 
   return (
-    <OuterWrapper style={wrapperStyle}>
-      <Wrapper onKeyDown={handleKeyDown} {...props}>
-        <TitleWrapper>
-          <Title>TV Version: {version}</Title>
-        </TitleWrapper>
-        <LogWrapper tabIndex={-1} ref={scrollRef}>
-          <Console filter={props.filter} logs={logs}/>
-        </LogWrapper>
-        <InputWrapper>
-          <Input ref={inputRef} onChange={handleChange} value={value} placeholder='>Console'/>
-          <Button ref={buttonRef} onClick={handleSubmit}>Submit</Button>
-        </InputWrapper>
-      </Wrapper>
-    </OuterWrapper>
+    <>
+      <CodeWrapper style={codeWrapperStyle}>
+        <CodeText>Code: {code}</CodeText>
+      </CodeWrapper>
+      <OuterWrapper style={wrapperStyle}>
+        <Wrapper onKeyDown={handleKeyDown} {...props}>
+          <TitleWrapper>
+            <Title>TV Version: {version}</Title>
+          </TitleWrapper>
+          <LogWrapper tabIndex={-1} ref={scrollRef}>
+            <Console filter={props.filter} logs={logs} />
+          </LogWrapper>
+          <InputWrapper>
+            <Input ref={inputRef} onChange={handleChange} value={value} placeholder='>Console' />
+            <Button ref={buttonRef} onClick={handleSubmit}>Submit</Button>
+          </InputWrapper>
+        </Wrapper>
+      </OuterWrapper>
+    </>
   )
 };

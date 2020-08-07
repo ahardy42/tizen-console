@@ -50,6 +50,7 @@
     "deploy-example": "cd example && npm run deploy",
     "dev": "concurrently --kill-others \"npm run build-watch\" \"npm run start-example\"",
     "tizen": "npm run build && cd example && make restart",
+    "tizen-tv": "npm run build && cd example && make restart-tv",
     "test": "npm run test:lint && npm run test:unit",
     "pretest": "npm run build",
     "test:unit": "ts-node test/test.ts",

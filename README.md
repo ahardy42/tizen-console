@@ -9,7 +9,7 @@ This package is a work in progress!! feel free to submit PRs for new and better 
 To install all dependencies run:
 
 ```
-npm i
+npm install tizen-console
 ```
 
 It will install:
@@ -19,12 +19,6 @@ It will install:
 - `dependencies` and `devDependencies` from ./example/package.json (example `create react app` for testing)
 
 ## Utilization
-
-install the package
-
-```
-npm install tizen-console
-```
 
 be sure that your tizen project `config.xml` has the following priviledges enabled (at minimum):
 
@@ -85,8 +79,12 @@ corner specified which corner of the TV window the console will be and size indi
 
 ## using the console
 
-activate and de-activate the console by pressing the red A button on your remote.
+activate and de-activate the console by pressing 12345 on your remote.
 the keyboard will open indicating that the input is active. type a function to log the result of the console and press the enter key
+
+## checking out the example app
+
+to see the very simple example app in action in your browser:
 
 ## credits
 
