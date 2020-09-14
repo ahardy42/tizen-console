@@ -46,6 +46,8 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
       if (fullyScrolled('down')) {
         scrollRef.current?.blur();
         inputRef.current?.focus();
+      } else {
+        if (scrollRef.current) scrollRef.current.scrollTop += 200;
       }
     } else if (focused === inputRef.current) {
       inputRef.current?.blur();
@@ -65,6 +67,8 @@ export const TizenConsole: React.FC<TizenConsoleProps> = props => {
     } else if (focused === inputRef.current) {
       inputRef.current?.blur();
       scrollRef.current?.focus();
+    } else if (focused === scrollRef.current) {
+      if (!fullyScrolled('up') && scrollRef.current) scrollRef.current.scrollTop -= 200;
     }
   }
   
